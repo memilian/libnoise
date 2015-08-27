@@ -1,0 +1,12 @@
+{
+  "name": "libnoise",
+  "url" : "https://github.com/memilian/libnoise/",
+  "license": "LGPL",
+  "tags": ["noise", "procedural"],
+  "description": "haxe port of the libnoise library",
+  "version": "1.0.0",
+  "classPath": "Sources/",
+  "releasenote": "Initial release",
+  "contributors": ["Mathieu Emilian"],
+  "dependencies": {}
+}
