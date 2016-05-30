@@ -3,6 +3,10 @@
 This is a haxe port of [libnoise](http://libnoise.sourceforge.net/), the coherent noise library.
 The port is almost complete, only the gradient and noise2D utilities are missing. 
 
+Install with :
+```
+haxelib install libnoise
+```
 
 	 
 ##Images
