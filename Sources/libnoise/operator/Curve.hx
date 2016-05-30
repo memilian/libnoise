@@ -1,7 +1,6 @@
 package libnoise.operator;
 
 import haxe.ds.ArraySort;
-import haxe.ds.Vector;
 
 /**
  * Provides a noise module that maps the output value from a source module onto an
@@ -9,7 +8,7 @@ import haxe.ds.Vector;
  */
 class Curve extends ModuleBase {
 
-	var data : Array<Vector<Float>>;
+	var data : Array<Array<Float>>;
 
 	/**
 	 *	Initializes a new instance of Curve.
@@ -20,7 +19,7 @@ class Curve extends ModuleBase {
 		super(1);
 		set(0, input);
 
-		data = new Array<Vector<Float>>();
+		data = new Array<Array<Float>>();
 	}
 
 	public inline function controlPointCount() : Int {
@@ -35,7 +34,7 @@ class Curve extends ModuleBase {
 	 */
 
 	public function add(input : Float, output : Float) {
-		var vec = new Vector<Float>(2);
+		var vec = new Array<Float>();
 		vec[0] = input;
 		vec[1] = output;
 		for(v in data){
@@ -43,7 +42,7 @@ class Curve extends ModuleBase {
 				return;
 		}
 		data.push(vec);
-		ArraySort.sort(data, function(a : Vector<Float>, b : Vector<Float>) {
+		ArraySort.sort(data, function(a : Array<Float>, b : Array<Float>) {
 			return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
 		});
 	}
@@ -53,7 +52,7 @@ class Curve extends ModuleBase {
 	 */
 
 	public inline function clear() {
-		data = new Array<Vector<Float>>();
+		data = new Array<Array<Float>>();
 	}
 
 	override public function getValue(x : Float, y : Float, z : Float) {

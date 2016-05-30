@@ -3,10 +3,11 @@
   "url" : "https://github.com/memilian/libnoise/",
   "license": "LGPL",
   "tags": ["noise", "procedural"],
-  "description": "haxe port of the libnoise library",
-  "version": "1.0.0",
+  "description": "Haxe port of libnoise, the coherent noise library",
+  "version": "1.0.1",
   "classPath": "Sources/",
-  "releasenote": "Initial release",
-  "contributors": ["Mathieu Emilian"],
+  "releasenote": "haxe 3.3.0 compatibility, added NoiseMaps",
+  "contributors": ["memilian"],
   "dependencies": {}
 }
+

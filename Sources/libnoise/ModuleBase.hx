@@ -1,13 +1,12 @@
 package libnoise;
 
-import haxe.ds.Vector;
 class ModuleBase {
 
-	var modules : Vector<ModuleBase>;
+	var modules : Array<ModuleBase>;
 
 	public function new(count : Int) {
 		if (count > 0)
-			modules = new Vector<ModuleBase>(count);
+			modules = new Array<ModuleBase>();
 	}
 
 	public inline function get(index : Int) {

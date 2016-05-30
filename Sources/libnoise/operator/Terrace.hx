@@ -5,6 +5,7 @@ import haxe.ds.ArraySort;
   * Provides a noise module that maps the output value from a source module onto a
   * terrace-forming curve. [OPERATOR]
   */
+  
 class Terrace extends ModuleBase {
 
 	public var data : Array<Float>;
@@ -47,12 +48,11 @@ class Terrace extends ModuleBase {
 			add(cv);
 			cv += ts;
 		}
-
 	}
 
 	override public function getValue(x : Float, y : Float, z : Float) {
 		#if debug
-		if (length < 1)
+		if (length() < 1)
 			throw "need a module";
 		if (controlPointCount() < 2)
 			throw "need at least 2 controls points";

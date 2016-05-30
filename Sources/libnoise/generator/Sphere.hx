@@ -1,4 +1,5 @@
 package libnoise.generator;
+
 class Sphere extends ModuleBase{
 
 	var frequency = 1.0;

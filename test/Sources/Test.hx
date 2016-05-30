@@ -30,6 +30,12 @@ import libnoise.generator.Const;
 import libnoise.generator.Checker;
 import libnoise.generator.RidgedMultifractal;
 import libnoise.generator.Billow;
+import libnoise.builder.NoiseMap;
+import libnoise.builder.NoiseMapBuilderPlane;
+import libnoise.builder.NoiseMapBuilderCylinder;
+import libnoise.builder.NoiseMapBuilderSphere;
+import libnoise.builder.NoiseMapBuilder;
+
 import format.png.Tools;
 import format.png.Writer;
 import format.png.Data;
@@ -112,7 +118,6 @@ class Test {
 		testName = "voronoi_distance_off";
 		module = new Voronoi(frequency * 2, 1, seed, false);
 		generate([module], testName);
-
 
 		/**
 		 * 	Operators
@@ -259,8 +264,46 @@ class Test {
 		turb.setFrequency(0.03);
 		generate([module, turb], testName);
 
+		 
+                /**
+                  *  NoiseMapBuilders
+                  **/
+                  
+                module = new Perlin(frequency, lacunarity, persistence, octaves, seed, quality);
+                
+                testName = "Perlin_tileable";
+                var planeMapBuilder = new NoiseMapBuilderPlane();
+                planeMapBuilder.isSeamlessEnabled = true;   //set tileable
+                planeMapBuilder.sourceModule = module;
+                planeMapBuilder.setDestSize(width, height);
+                planeMapBuilder.setBounds(0,0,width, height);
+                planeMapBuilder.destNoiseMap = new NoiseMap(width,height);
+                generateFromBuilders([planeMapBuilder, planeMapBuilder], testName);
+                
+                   
+                //the cylinder is normalized, we need to increase frequency (or add a scale module)
+                module = new Perlin(frequency * 100, lacunarity, persistence, octaves, seed, quality);
+                
+                testName = "Perlin_Cylinder";
+                var cylinderMapBuilder = new NoiseMapBuilderCylinder();
+                cylinderMapBuilder.sourceModule = module;
+                cylinderMapBuilder.setDestSize(width, height);
+                cylinderMapBuilder.setBounds(-180,180,0,2);
+                cylinderMapBuilder.destNoiseMap = new NoiseMap(width,height);
+                generateFromBuilders([cylinderMapBuilder], testName);
+                
+                
+                //the sphere is normalized, we need to increase frequency (or add a scale module)
+                module = new Perlin(frequency * 100, lacunarity, persistence, octaves, seed, quality);
 
-
+                testName = "Perlin_Sphere";
+                var sphereMapBuilder = new NoiseMapBuilderSphere();
+                sphereMapBuilder.sourceModule = module;
+                sphereMapBuilder.setDestSize(width, height);
+                sphereMapBuilder.setBounds(-90,90,-180,180);
+                sphereMapBuilder.destNoiseMap = new NoiseMap(width,height);
+                generateFromBuilders([sphereMapBuilder], testName);
+                
 	}
 
 	//generate a png containing the image of each modules next of each other
@@ -280,6 +323,34 @@ class Test {
 				var xOff = moduleIndex * width;
 
 				var value = getGreyValue(modules[moduleIndex].getValue(x - xOff, y, 0));
+				data.addByte(value);
+			}
+		}
+
+		createPng(data.getBytes(), w, height, name);
+
+		var genTime = Timer.stamp() - timeStart;
+		trace('Generated image $name in $genTime');
+	}
+	
+	public function generateFromBuilders(builders : Array<NoiseMapBuilder>, name : String) {
+		var timeStart = Timer.stamp();
+
+		var w = (builders.length) * width;
+
+		//generate noiseMaps
+		for(builder in builders)
+                    builder.build();
+
+		//generate pixel values
+		var data : BytesBuffer = new BytesBuffer();
+		for (y in 0...height) {
+			for (x in 0...w) {
+				//pick a noiseMap based on the current x position
+				var idx = Std.int(x / width);
+				var xOff = idx * width;
+
+				var value = getGreyValue(builders[idx].destNoiseMap.getValue(x - xOff, y));
 				data.addByte(value);
 			}
 		}

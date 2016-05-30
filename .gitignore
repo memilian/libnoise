@@ -1,0 +1,7 @@
+test/images/*
+test/build-test
+.idea
+*.iml
+libnoise.zip
+.directory
+

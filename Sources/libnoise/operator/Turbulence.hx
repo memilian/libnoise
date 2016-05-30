@@ -7,7 +7,8 @@ import libnoise.QualityMode;
  * Provides a noise module that that randomly displaces the input value before
  * returning the output value from a source module. [OPERATOR]
  **/
-class Turbulence  extends ModuleBase{
+
+ class Turbulence  extends ModuleBase{
 
 	static inline var X0 : Float = (12414.0 / 65536.0);
 	static inline var Y0 : Float = (65124.0 / 65536.0);

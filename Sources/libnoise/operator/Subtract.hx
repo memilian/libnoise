@@ -1,4 +1,5 @@
 package libnoise.operator;
+
 class Subtract extends ModuleBase {
 
 	/**

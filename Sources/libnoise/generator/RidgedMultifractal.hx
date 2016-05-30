@@ -1,9 +1,8 @@
 package libnoise.generator;
 
-import haxe.ds.Vector;
 class RidgedMultifractal extends ModuleBase{
 
-	var weights : Vector<Float> = new Vector<Float>(Utils.OctavesMaximum);
+	var weights : Array<Float> = new Array<Float>();
 	public var frequency : Float;
 	public var lacunarity : Float;
 	public var persistence : Float;
@@ -51,9 +50,9 @@ class RidgedMultifractal extends ModuleBase{
 
 	function updateWeights(){
 		var f = 1.0;
-		for (i in 0...weights.length)
+		for (i in 0...(Utils.OctavesMaximum))
 		{
-			weights[i] = Math.pow(f, -1.0);
+			weights.push(Math.pow(f, -1.0));
 			f *= lacunarity;
 		}
 	}

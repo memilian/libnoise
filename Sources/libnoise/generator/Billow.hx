@@ -1,6 +1,8 @@
 package libnoise.generator;
+
 class Billow extends ModuleBase {
 
+	@range()
 	public var frequency : Float;
 	public var lacunarity : Float;
 	public var persistence : Float;

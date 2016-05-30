@@ -19,7 +19,7 @@ class Utils {
 	static private var GeneratorShift : Int = 8;
 	#end
 
-	static var Randoms : Array<Float> = [
+	public static var Randoms : Array<Float> = [
 		-0.763874, -0.596439, -0.246489, 0.0, 0.396055, 0.904518, -0.158073, 0.0,
 		-0.499004, -0.8665, -0.0131631, 0.0, 0.468724, -0.824756, 0.316346, 0.0,
 		0.829598, 0.43195, 0.353816, 0.0, -0.454473, 0.629497, -0.630228, 0.0,
@@ -150,7 +150,7 @@ class Utils {
 		0.991353, 0.112814, 0.0670273, 0.0, 0.0337884, -0.979891, -0.196654, 0.0
 	];
 
-	static public function GradientCoherentNoise3D(x : Float, y : Float, z : Float, seed : Int, quality : QualityMode) : Float {
+	static public inline function GradientCoherentNoise3D(x : Float, y : Float, z : Float, seed : Int, quality : QualityMode) : Float {
 
 		var x0 = x > 0.0 ? Std.int(x) : Std.int(x) - 1;
 		var x1 = x0 + 1;
@@ -193,7 +193,7 @@ class Utils {
 		return InterpolateLinear(iy0, iy1, zs);
 	}
 
-	static public function GradientNoise3D(fx : Float, fy : Float, fz : Float, ix : Int, iy : Int, iz : Int, seed : Int) {
+	static public inline function GradientNoise3D(fx : Float, fy : Float, fz : Float, ix : Int, iy : Int, iz : Int, seed : Int) {
 		var i = (GeneratorNoiseX * ix + GeneratorNoiseY * iy + GeneratorNoiseZ * iz +
 		GeneratorSeed * seed) & 0xffffffff;
 		i ^= (i >> GeneratorShift);
@@ -207,7 +207,7 @@ class Utils {
 		return ((xvg * xvp) + (yvg * yvp) + (zvg * zvp)) * 2.12;
 	}
 
-	static public function InterpolateCubic(a : Float, b : Float, c : Float, d : Float, position : Float) {
+	static public inline function InterpolateCubic(a : Float, b : Float, c : Float, d : Float, position : Float) {
 		var p = (d - c) - (a - b);
 		var q = (a - b) - p;
 		var r = c - a;
@@ -215,7 +215,7 @@ class Utils {
 		return p * position * position * position + q * position * position + r * position + s;
 	}
 
-	static public function InterpolateLinear(a : Float, b : Float, position : Float) {
+	static public inline function InterpolateLinear(a : Float, b : Float, position : Float) {
 		return ((1.0 - position) * a) + (position * b);
 	}
 
@@ -224,7 +224,7 @@ class Utils {
 		return a - Std.int(a / b) * b;
 	}
 
-	static public function MakeInt32Range(value : Float) {
+	static public inline function MakeInt32Range(value : Float) {
 		if (value >= 1073741824.0) {
 			return (2.0 * fmod(value, 1073741824.0)) - 1073741824.0;
 		}
@@ -238,7 +238,7 @@ class Utils {
 		return value * value * (3.0 - 2.0 * value);
 	}
 
-	static public function MapQuinticSCurve(value : Float) : Float {
+	static public inline function MapQuinticSCurve(value : Float) : Float {
 		var a3 = value * value * value;
 		var a4 = a3 * value;
 		var a5 = a4 * value;
@@ -256,6 +256,10 @@ class Utils {
 	}
 
 	static public inline function Clamp(value : Int, min : Int, max : Int) {
+		return value < min ? min : value > max ? max : value;
+	}
+
+	static public inline function Clampf(value : Float, min : Float, max : Float) {
 		return value < min ? min : value > max ? max : value;
 	}
 }

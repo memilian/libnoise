@@ -7,8 +7,6 @@ package libnoise.operator;
  */
 class Displace extends ModuleBase {
 
-	public var exponent = 1.0;
-
 	public var X(get,set) : ModuleBase;
 	public inline function set_X(val : ModuleBase){
 		return set(1, val);
