@@ -8,6 +8,14 @@ Install with :
 haxelib install libnoise
 ```
 
+##changelog
+###1.0.1:
+* fixes to be compatible with haxe 3.3
+* added NoiseMap
+* added builders to create planar (with seamless option), spherical and cylindrical projections
+* added builders tests
+* inlined some utils function to get ~+20% performance
+
 	 
 ##Images
 
