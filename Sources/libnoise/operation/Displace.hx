@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
  * Provides a noise module that uses three source modules to displace each

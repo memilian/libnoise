@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
  * Provides a noise module that clamps the output value from a source module to a

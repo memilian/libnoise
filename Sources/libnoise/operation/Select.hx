@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
  *	Provide a noise module that outputs the value selected from one of the two sources

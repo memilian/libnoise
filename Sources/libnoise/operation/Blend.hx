@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
  * Provides a noise module that outputs a weighted blend of the output values from

@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 import libnoise.generator.Perlin;
 import libnoise.QualityMode;

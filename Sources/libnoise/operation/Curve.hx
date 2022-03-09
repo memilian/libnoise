@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 import haxe.ds.ArraySort;
 
