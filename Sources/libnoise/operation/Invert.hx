@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 
 /**

@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
   * Provides a noise module that rotates the input value around the origin before

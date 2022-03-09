@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
  * Provides a noise module that outputs the sum of the two output values from two

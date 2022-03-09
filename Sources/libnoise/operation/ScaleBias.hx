@@ -1,4 +1,4 @@
-package libnoise.operator;
+package libnoise.operation;
 
 /**
   * Provides a noise module that applies a scaling factor and a bias to the output
