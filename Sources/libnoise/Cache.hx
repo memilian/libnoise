@@ -1,49 +1,45 @@
 package libnoise;
 
-import haxe.macro.Expr;
-
 /**
  * A 3D array of data, used internally.
  */
 class Cache<T> {
 
-	@:noCompletion public var data : Array<Array<Array<T>>> = null;
+	var data : Array<Array<Array<T>>> = null;
 
 	public var empty(get, never) : Bool;
 
-	@:noCompletion public var xMin : Int = 0;
-	@:noCompletion public var yMin : Int = 0;
-	@:noCompletion public var zMin : Int = 0;
-	@:noCompletion public var xMax : Int = -1;
-	@:noCompletion public var yMax : Int = -1;
-	@:noCompletion public var zMax : Int = -1;
+	public var xMin(default, null) : Int = 0;
+	public var yMin(default, null) : Int = 0;
+	public var zMin(default, null) : Int = 0;
+	public var xMax(default, null) : Int = -1;
+	public var yMax(default, null) : Int = -1;
+	public var zMax(default, null) : Int = -1;
 
 	public inline function new() {
 	}
 
 	/**
 	 * Allocates enough space to cache the given region. This will overwrite any existing data.
-	 * @param calculateValue An expression that calculates the value to cache at (`x`, `y`, `z`). The
-	 * expression will have access to `x`, `y`, and `z`, even if the calling function doesn't define them.
 	 */
-	public macro function allocate<T>(self : ExprOf<Cache<T>>, xMin : ExprOf<Int>, yMin : ExprOf<Int>, zMin : ExprOf<Int>, xMax : ExprOf<Int>, yMax : ExprOf<Int>, zMax : ExprOf<Int>, calculateValue : ExprOf<T>) : Expr {
-		return macro {
-			$self.data =
-				[for (x in $xMin...($xMax + 1))
-					[for (y in $yMin...($yMax + 1))
-						[for (z in $zMin...($zMax + 1))
-							$calculateValue
-						]
-					]
-				];
+	public inline function allocate(xMin : Int, yMin : Int, zMin : Int, xMax : Int, yMax : Int, zMax : Int) : Void {
+		data = [];
+		for (x in 0...(xMax - xMin + 1)) {
+			data.push([]);
+			for (y in 0...(yMax - yMin + 1)) {
+				data[x].push([]);
 
-			$self.xMin = $xMin;
-			$self.yMin = $yMin;
-			$self.zMin = $zMin;
-			$self.xMax = $xMax;
-			$self.yMax = $yMax;
-			$self.zMax = $zMax;
+				// `resize()` will insert appropriate default values.
+				data[x][y].resize(zMax - zMin + 1);
+			}
 		}
+
+		this.xMin = xMin;
+		this.yMin = yMin;
+		this.zMin = zMin;
+		this.xMax = xMax;
+		this.yMax = yMax;
+		this.zMax = zMax;
 	}
 
 	public inline function clear() : Void {

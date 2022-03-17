@@ -96,10 +96,17 @@ class Voronoi extends ModuleBase {
 			Math.floor(zMin * frequency) - 2,
 			Math.floor(xMax * frequency) + 2,
 			Math.floor(yMax * frequency) + 2,
-			Math.floor(zMax * frequency) + 2,
-			new Site(x + Utils.ValueNoise3D(x, y, z, seed),
-				y + Utils.ValueNoise3D(x, y, z, seed + 1),
-				z + Utils.ValueNoise3D(z, y, z, seed + 2)));
+			Math.floor(zMax * frequency) + 2);
+
+		for(z in sites.zMin...(sites.zMax + 1)) {
+			for(y in sites.yMin...(sites.yMax + 1)) {
+				for(x in sites.xMin...(sites.xMax + 1)) {
+					sites.set(x, y, z, new Site(x + Utils.ValueNoise3D(x, y, z, seed),
+						y + Utils.ValueNoise3D(x, y, z, seed + 1),
+						z + Utils.ValueNoise3D(z, y, z, seed + 2)));
+				}
+			}
+		}
 	}
 
 	@:inheritDoc
