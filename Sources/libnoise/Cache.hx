@@ -22,6 +22,7 @@ class Cache<T> {
 	}
 
 	/**
+	 * Allocates enough space to cache the given region. This will overwrite any existing data.
 	 * @param calculateValue An expression that calculates the value to cache at (`x`, `y`, `z`). The
 	 * expression will have access to `x`, `y`, and `z`, even if the calling function doesn't define them.
 	 */

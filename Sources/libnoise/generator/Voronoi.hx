@@ -2,20 +2,29 @@ package libnoise.generator;
 
 import libnoise.Cache;
 
+/**
+ * Provides a noise module that outputs Voronoi cells. [GENERATOR]
+ */
 class Voronoi extends ModuleBase {
 
-	var pointCache : Cache<Vector>;
+	var sites : Cache<Site>;
 	var frequency : Float;
 	var displacement : Float;
 	var seed : Int;
-	var distance : Bool;
+	var useDistance : Bool;
 
-	public function new(frequency : Float, displacement : Float, seed : Int, distance : Bool) {
+	/**
+	 * @param frequency The frequency of the site points.
+	 * @param displacement The intensity of the output value. Multiplies everything except distance.
+	 * @param seed The random seed.
+	 * @param useDistance Indicates whether the distance from the nearest site is added to the output value.
+	 */
+	public function new(frequency : Float, displacement : Float, seed : Int, useDistance : Bool) {
 		this.frequency = frequency;
 		this.displacement = displacement;
 		this.seed = seed;
-		this.distance = distance;
-		pointCache = new Cache();
+		this.useDistance = useDistance;
+		sites = new Cache();
 		super(0);
 	}
 
@@ -23,78 +32,86 @@ class Voronoi extends ModuleBase {
 		x *= frequency;
 		y *= frequency;
 		z *= frequency;
-		var xi = Math.floor(x);
-		var iy = Math.floor(y);
-		var iz = Math.floor(z);
-		var md = 2147483647.0;
-		var xc : Float = 0;
-		var yc : Float = 0;
-		var zc : Float = 0;
-		for (zcu in (iz - 2)...(iz + 3)) {
-			for (ycu in (iy - 2)...(iy + 3)) {
-				for (xcu in (xi - 2)...(xi + 3)) {
-					var xp : Float;
-					var yp : Float;
-					var zp : Float;
-					if (pointCache.inBounds(xcu, ycu, zcu)) {
-						var p : Vector = pointCache.get(xcu, ycu, zcu);
-						xp = p.x;
-						yp = p.y;
-						zp = p.z;
+
+		var xInt = Math.floor(x);
+		var yInt = Math.floor(y);
+		var zInt = Math.floor(z);
+
+		var minDist = Math.POSITIVE_INFINITY;
+		var xCandidate : Float = 0;
+		var yCandidate : Float = 0;
+		var zCandidate : Float = 0;
+
+		// Inside each unit cube, there is a site at a random position.  Go
+		// through each of the nearby cubes until we find a cube with a site
+		// that is closest to (x, y, z).
+		for (zCur in (zInt - 2)...(zInt + 3)) {
+			for (yCur in (yInt - 2)...(yInt + 3)) {
+				for (xCur in (xInt - 2)...(xInt + 3)) {
+					// Calculate the position and distance to the site inside of
+					// this unit cube.
+					var siteX : Float;
+					var siteY : Float;
+					var siteZ : Float;
+					if (sites.inBounds(xCur, yCur, zCur)) {
+						var site : Site = sites.get(xCur, yCur, zCur);
+						siteX = site.x;
+						siteY = site.y;
+						siteZ = site.z;
 					} else {
-						xp = xcu + Utils.ValueNoise3D(xcu, ycu, zcu, seed);
-						yp = ycu + Utils.ValueNoise3D(xcu, ycu, zcu, seed + 1);
-						zp = zcu + Utils.ValueNoise3D(xcu, ycu, zcu, seed + 2);
+						siteX = xCur + Utils.ValueNoise3D(xCur, yCur, zCur, seed);
+						siteY = yCur + Utils.ValueNoise3D(xCur, yCur, zCur, seed + 1);
+						siteZ = zCur + Utils.ValueNoise3D(xCur, yCur, zCur, seed + 2);
 					}
-					var xd = xp - x;
-					var yd = yp - y;
-					var zd = zp - z;
-					var d = xd * xd + yd * yd + zd * zd;
-					if (d < md) {
-						md = d;
-						xc = xp;
-						yc = yp;
-						zc = zp;
+
+					var dist = (siteX - x) * (siteX - x) + (siteY - y) * (siteY - y) + (siteZ - z) * (siteZ - z);
+					if (dist < minDist) {
+						// This site is closer than any others found so far.
+						minDist = dist;
+						xCandidate = siteX;
+						yCandidate = siteY;
+						zCandidate = siteZ;
 					}
 				}
 			}
 		}
-		var v : Float;
-		if (distance) {
-			var xd = xc - x;
-			var yd = yc - y;
-			var zd = zc - z;
-			v = (Math.sqrt(xd * xd + yd * yd + zd * zd)) * Utils.SQRT3 - 1.0;
+
+		var value : Float;
+		if (useDistance) {
+			// Determine the distance to the nearest site.
+			value = Math.sqrt(minDist) * Utils.SQRT3 - 1.0;
 		}
 		else {
-			v = 0.0;
+			value = 0.0;
 		}
-		return v + (displacement * Utils.ValueNoise3D(Std.int(Math.floor(xc)), Std.int(Math.floor(yc)),
-		Std.int(Math.floor(zc)), 0));
+		return value + (displacement * Utils.ValueNoise3D(Std.int(Math.floor(xCandidate)), Std.int(Math.floor(yCandidate)),
+		Std.int(Math.floor(zCandidate)), 0));
 	}
 
 	@:inheritDoc
 	public override function cache(xMin : Float, yMin : Float, zMin : Float, xMax : Float, yMax : Float, zMax : Float) {
-		var xMinInt : Int = Math.floor(xMin * frequency) - 2;
-		var yMinInt : Int = Math.floor(yMin * frequency) - 2;
-		var zMinInt : Int = Math.floor(zMin * frequency) - 2;
-		var xMaxInt : Int = Math.floor(xMax * frequency) + 2;
-		var yMaxInt : Int = Math.floor(yMax * frequency) + 2;
-		var zMaxInt : Int = Math.floor(zMax * frequency) + 2;
-
-		pointCache.allocate(xMinInt, yMinInt, zMinInt, xMaxInt, yMaxInt, zMaxInt,
-			new Vector(x + Utils.ValueNoise3D(x, y, z, seed),
+		sites.allocate(
+			Math.floor(xMin * frequency) - 2,
+			Math.floor(yMin * frequency) - 2,
+			Math.floor(zMin * frequency) - 2,
+			Math.floor(xMax * frequency) + 2,
+			Math.floor(yMax * frequency) + 2,
+			Math.floor(zMax * frequency) + 2,
+			new Site(x + Utils.ValueNoise3D(x, y, z, seed),
 				y + Utils.ValueNoise3D(x, y, z, seed + 1),
 				z + Utils.ValueNoise3D(z, y, z, seed + 2)));
 	}
 
 	@:inheritDoc
 	public override function clearCache() : Void {
-		pointCache.clear();
+		sites.clear();
 	}
 }
 
-class Vector {
+/**
+ * The central point defining a Voronoi cell. Also known as a seed or a generator.
+ */
+class Site {
 	public var x : Float;
 	public var y : Float;
 	public var z : Float;
